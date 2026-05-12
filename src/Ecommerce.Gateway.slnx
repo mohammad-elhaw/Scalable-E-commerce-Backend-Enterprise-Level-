@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/BuildingBlocks/">
+    <Project Path="BuildingBlocks/Application.Abstractions/Application.Abstractions.csproj" Id="1483e12f-7366-4f51-991e-0219c0350e47" />
+    <Project Path="BuildingBlocks/Infrastructure/Infrastructure.csproj" Id="dc0d779f-888f-4139-a8b7-e125fe0a739e" />
+    <Project Path="BuildingBlocks/SharedKernel/SharedKernel.csproj" Id="9cad9a0f-967e-4eac-881b-16198ce1315d" />
+  </Folder>
+  <Folder Name="/Modules/" />
+  <Project Path="docker-compose.dcproj">
+    <Build />
+  </Project>
+  <Project Path="Ecommerce.Gateway/Ecommerce.Gateway.csproj" />
+</Solution>
