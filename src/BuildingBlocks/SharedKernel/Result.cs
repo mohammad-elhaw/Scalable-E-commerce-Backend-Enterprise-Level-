@@ -14,6 +14,12 @@ public class Result
 
     public static Result Success() => new(true, Error.None);
     public static Result Failure(Error error) => new(false, error);
+
+    public void OnFailure(Action<Error> action)
+    {
+        if (IsFailure)
+            action(Error);
+    }
 }
 
 public class Result<T> : Result
@@ -28,4 +34,6 @@ public class Result<T> : Result
 
     public static Result<T> Success(T value) => new (true, value, Error.None);
     public static new Result<T> Failure(Error error) => new(false, default, error);
+
+    
 }

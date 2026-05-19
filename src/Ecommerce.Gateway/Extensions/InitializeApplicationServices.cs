@@ -11,6 +11,7 @@ public static class InitializeApplicationServices
         services.AddInfrastructure();
 
         services.AddAuthentication();
+        services.AddAuthorization();
         return services;
     }
 }

@@ -10,7 +10,7 @@ public static class ServiceCollectionExtension
         this IServiceCollection services,
         params Assembly[] assemblies)
     {
-        //services.AddMessaging(assemblies);
+        services.AddMessaging(assemblies);
         return services;
     }
 }

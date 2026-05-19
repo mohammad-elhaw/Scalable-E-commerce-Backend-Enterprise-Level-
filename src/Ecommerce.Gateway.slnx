@@ -5,6 +5,12 @@
     <Project Path="BuildingBlocks/SharedKernel/SharedKernel.csproj" Id="9cad9a0f-967e-4eac-881b-16198ce1315d" />
   </Folder>
   <Folder Name="/Modules/" />
+  <Folder Name="/Modules/Catalog/">
+    <Project Path="Modules/Catalog/Catalog.API/Catalog.API.csproj" Id="809377b1-8375-4d40-814e-5f5594f47161" />
+    <Project Path="Modules/Catalog/Catalog.Application/Catalog.Application.csproj" Id="03ba6c18-59a2-46fd-a21f-1a2cc7966273" />
+    <Project Path="Modules/Catalog/Catalog.Domain/Catalog.Domain.csproj" Id="58a7f52a-1541-4682-a0c3-75971dc95569" />
+    <Project Path="Modules/Catalog/Catalog.Infrastructure/Catalog.Infrastructure.csproj" Id="a0092725-2360-4d04-987e-2fc43db3f99d" />
+  </Folder>
   <Project Path="docker-compose.dcproj">
     <Build />
   </Project>

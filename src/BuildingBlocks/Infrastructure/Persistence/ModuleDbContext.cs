@@ -12,14 +12,18 @@ public abstract class ModuleDbContext(
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         var domainEvents = ChangeTracker
-            .Entries<AggregateRoot<Guid>>()
-            .Select(e => e.Entity)
+            .Entries()
+            .Where(e => e.Entity is IHasDomainEvents)
+            .Select(e => (IHasDomainEvents)e.Entity)
             .SelectMany(e => e.DomainEvents)
             .ToList();
 
-        foreach (var entry in ChangeTracker.Entries<AggregateRoot<Guid>>())
+        foreach (var entry in ChangeTracker.Entries())
         {
-            entry.Entity.ClearDomainEvents();
+            if(entry.Entity is IHasDomainEvents entity)
+            {
+                entity.ClearDomainEvents();
+            }
         }
 
         var result = await base.SaveChangesAsync(cancellationToken);
