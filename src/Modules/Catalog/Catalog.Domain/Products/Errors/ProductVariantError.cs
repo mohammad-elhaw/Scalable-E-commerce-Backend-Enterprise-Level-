@@ -51,4 +51,10 @@ internal static class ProductVariantError
             "ProductVariant.AttributeNotFound",
             "Variant attribute not found.",
             default);
+
+    internal static readonly Error DuplicateAttributeName =
+        new(
+            "ProductVariant.DuplicateAttributeName",
+            "Variant attribute with the same name already exists.",
+            default);
 }

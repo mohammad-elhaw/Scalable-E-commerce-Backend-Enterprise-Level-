@@ -11,6 +11,18 @@
     <Project Path="Modules/Catalog/Catalog.Domain/Catalog.Domain.csproj" Id="58a7f52a-1541-4682-a0c3-75971dc95569" />
     <Project Path="Modules/Catalog/Catalog.Infrastructure/Catalog.Infrastructure.csproj" Id="a0092725-2360-4d04-987e-2fc43db3f99d" />
   </Folder>
+  <Folder Name="/Modules/Customers/" />
+  <Folder Name="/Modules/Identity/" />
+  <Folder Name="/Modules/Inventory/">
+    <Project Path="Modules/Inventory/Inventory.API/Inventory.API.csproj" Id="a67ab7df-7c58-4408-bf97-3c49b1e0ba63" />
+    <Project Path="Modules/Inventory/Inventory.Application/Inventory.Application.csproj" Id="6aca9743-7b22-4fbf-bdb3-76bacaa9252c" />
+    <Project Path="Modules/Inventory/Inventory.Domain/Inventory.Domain.csproj" Id="6262c782-0e24-47f4-9ee6-06b319fa2293" />
+    <Project Path="Modules/Inventory/Inventory.Infrastructure/Inventory.Infrastructure.csproj" Id="15d1c30b-8dcd-4878-b2e0-6dc519dbdcbb" />
+  </Folder>
+  <Folder Name="/Modules/Ordering/" />
+  <Folder Name="/Modules/Payments/" />
+  <Folder Name="/Modules/Pricing/" />
+  <Folder Name="/Modules/Shipping/" />
   <Project Path="docker-compose.dcproj">
     <Build />
   </Project>

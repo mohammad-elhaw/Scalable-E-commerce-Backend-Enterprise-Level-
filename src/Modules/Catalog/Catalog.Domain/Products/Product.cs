@@ -11,26 +11,24 @@ public class Product : AuditableAggregateRoot<ProductId>
 
     private readonly List<ProductImage> _images = [];
 
-    private readonly List<Category> _categories = [];
+    private readonly List<CategoryId> _categoryIds = [];
 
     public ProductName Name { get; private set; }
     public Slug Slug { get; private set; }
     public ProductDescription Description { get; private set; }
-    public ProductPrice Price { get; private set; }
     public BrandId? BrandId { get; private set; }
     public SeoMetadata SeoMetadata { get; private set; }
     public ProductStatus Status { get; private set; }
-    public bool IsPublished { get; private set; }
     public DateTime? PublishedAtUtc { get; private set; }
 
-    public IReadOnlyCollection<ProductVariant> Variants
-        => _variants;
+    public IReadOnlyList<ProductVariant> Variants
+        => _variants.AsReadOnly();
 
-    public IReadOnlyCollection<ProductImage> Images
-        => _images;
+    public IReadOnlyList<ProductImage> Images
+        => _images.AsReadOnly();
 
-    public IReadOnlyCollection<Category> Categories
-        => _categories;
+    public IReadOnlyList<CategoryId> CategoryIds
+        => _categoryIds.AsReadOnly();
 
     private Product()
     {
@@ -38,7 +36,6 @@ public class Product : AuditableAggregateRoot<ProductId>
 
     public static Result<Product> Create(
         ProductContent content,
-        ProductPrice price,
         BrandId? brandId,
         SeoMetadata seoMetadata,
         ProductStatus status)
@@ -49,7 +46,6 @@ public class Product : AuditableAggregateRoot<ProductId>
             Name = content.Name,
             Slug = content.Slug,
             Description = content.Description,
-            Price = price,
             BrandId = brandId,
             SeoMetadata = seoMetadata,
             Status = status
@@ -61,13 +57,130 @@ public class Product : AuditableAggregateRoot<ProductId>
         return Result<Product>.Success(product);
     }
 
+    public Result AddVariant(ProductVariant variant)
+    {
+        if (variant is null)
+            return Result.Failure(ProductErrors.NoVariants);
+
+        var skuExists = _variants.Any(x =>
+            string.Equals(x.Sku, variant.Sku, StringComparison.OrdinalIgnoreCase));
+
+        if (skuExists)
+            return Result.Failure(ProductErrors.DuplicateSku);
+
+        //RaiseDomainEvent(new ProductVariantAddedDomainEvent(Id, variant.Id, variant.Sku));
+
+        _variants.Add(variant);
+
+        return Result.Success();
+    }
+
+    public Result RemoveVariant(ProductVariantId variantId)
+    {
+        var variant = _variants.FirstOrDefault(x => x.Id == variantId);
+
+        if (variant is null)
+            return Result.Failure(ProductErrors.VariantNotFound);
+
+        _variants.Remove(variant);
+
+        return Result.Success();
+    }
+
+    public Result AddImage(string imageUrl, bool isPrimary, int sortOrder)
+    {
+        if (string.IsNullOrWhiteSpace(imageUrl))
+            return Result.Failure(ProductErrors.InvalidImage);
+
+        if (_images.Any(x => x.SortOrder == sortOrder))
+            return Result.Failure(ProductErrors.DuplicateImageSortOrder);
+
+        var isFirstImage = _images.Count == 0;
+        var finalIsPrimary = isPrimary || isFirstImage;
+
+
+        var image = new ProductImage(imageUrl, finalIsPrimary, sortOrder);
+        _images.Add(image);
+
+        if(finalIsPrimary) ClearPrimaryImage(image);
+
+        return Result.Success();
+    }
+
+    private void ClearPrimaryImage(ProductImage newPrimary)
+    {
+        foreach (var image in _images)
+            image.UnMarkAsPrimary();
+
+        newPrimary.MarkAsPrimary();
+    }
+
+    public Result RemoveImage(int imageId)
+    {
+        var image = _images.FirstOrDefault(x => x.Id == imageId);
+        if (image is null)
+            return Result.Failure(ProductErrors.ImageNotFound);
+
+        var wasPrimary = image.IsPrimary;
+
+        _images.Remove(image);
+
+        if(wasPrimary && _images.Count > 0)
+        {
+            var firstImage = _images
+                .OrderBy(x => x.SortOrder)
+                .First();
+
+            firstImage.MarkAsPrimary();
+        }
+
+        return Result.Success();
+    }
+
+    public Result AddCategory(CategoryId categoryId)
+    {
+        if(_categoryIds.Contains(categoryId))
+            return Result.Failure(ProductErrors.CategoryAlreadyAssigned);
+
+        _categoryIds.Add(categoryId);
+        return Result.Success();
+    }
+
+    public Result RemoveCategory(CategoryId categoryId)
+    {
+        if (!_categoryIds.Contains(categoryId))
+            return Result.Failure(ProductErrors.CategoryNotAssigned);
+
+        _categoryIds.Remove(categoryId);
+        return Result.Success();
+    }
+
+    public Result UpdateSeo(SeoMetadata seoMetadata)
+    {
+        if (seoMetadata is null)
+            return Result.Failure(ProductErrors.InvalidSeoMetadata);
+
+        SeoMetadata = seoMetadata;
+        return Result.Success();
+    }
+
+    public Result Archive()
+    {
+        if (Status == ProductStatus.Archived)
+            return Result.Success();
+
+        Status = ProductStatus.Archived;
+
+        return Result.Success();
+    }
+
     public Result Publish()
     {
         var validationResult = EnsureCanPublish();
         if (validationResult.IsFailure)
             return Result.Failure(validationResult.Error);
 
-        IsPublished = true;
+        Status = ProductStatus.Active;
         PublishedAtUtc = DateTime.UtcNow;
 
         //RaiseDomainEvent(
@@ -78,13 +191,13 @@ public class Product : AuditableAggregateRoot<ProductId>
 
     private Result EnsureCanPublish()
     {
-        if (!_variants.Any())
+        if (!_variants.Any(v => v.IsActive))
             return Result.Failure(ProductErrors.NoVariants);
 
-        if(!_images.Any())
+        if(_images.Count == 0)
             return Result.Failure(ProductErrors.NoImages);
 
-        if(!_categories.Any())
+        if(_categoryIds.Count == 0)
             return Result.Failure(ProductErrors.NoCategories);
 
         return Result.Success();

@@ -3,21 +3,22 @@ using SharedKernel;
 
 namespace Catalog.Domain.Products;
 
-public class ProductVariant : Entity<int>
+public class ProductVariant : Entity<ProductVariantId>
 {
-    public string Sku { get; private set; } = string.Empty;
+    public Sku Sku { get; private set; }
     public Money Price { get; private set; } = default!;
     public Weight Weight { get; private set; } = default!;
     public Dimensions Dimensions { get; private set; } = default!;
+    public bool IsActive { get; private set; }
 
     private readonly List<VariantAttribute> _attributes = [];
     public IReadOnlyCollection<VariantAttribute> Attributes => _attributes.AsReadOnly();
     
     private ProductVariant() { }
 
-    public static Result<ProductVariant> Create(string sku, Money price, Weight weight, Dimensions dimensions)
+    public static Result<ProductVariant> Create(Sku sku, Money price, Weight weight, Dimensions dimensions)
     {
-        if (string.IsNullOrWhiteSpace(sku))
+        if (sku is null)
             return Result<ProductVariant>.Failure(ProductVariantError.EmptySku);
 
         var priceResult = price.IsLessThanOrEqualTo(Money.Zero(price.Currency));
@@ -25,11 +26,11 @@ public class ProductVariant : Entity<int>
         if (priceResult.Value)
             return Result<ProductVariant>.Failure(ProductVariantError.InvalidPrice);
 
-        var weightUnitResult = weight.IsLessThanOrEqual(Weight.Zero(weight.Unit));
-        if (weightUnitResult.IsFailure)
+        var weightValidation = weight.IsLessThanOrEqual(Weight.Zero(weight.Unit));
+        if (weightValidation.IsFailure)
             return Result<ProductVariant>.Failure(ProductVariantError.InvalidWeight);
 
-        if (weightUnitResult.Value)
+        if (weightValidation.Value)
             return Result<ProductVariant>.Failure(ProductVariantError.InvalidWeight);
         
         if (dimensions.IsZero)
@@ -37,6 +38,7 @@ public class ProductVariant : Entity<int>
 
         var variant = new ProductVariant
         {
+            Id = ProductVariantId.New(),
             Sku = sku,
             Price = price,
             Weight = weight,
@@ -58,7 +60,7 @@ public class ProductVariant : Entity<int>
 
         var exists = _attributes.Any(x => x.Name == attributeResult.Value!.Name);
         if (exists)
-            return Result.Failure(ProductVariantError.EmptyAttributeName);
+            return Result.Failure(ProductVariantError.DuplicateAttributeName);
 
         _attributes.Add(attributeResult.Value!);
 
@@ -68,7 +70,7 @@ public class ProductVariant : Entity<int>
     public Result RemoveAttribute(string name)
     {
         var attribute = _attributes
-            .FirstOrDefault(x => x.Name == name.Trim().ToLowerInvariant());
+            .FirstOrDefault(x => x.Name.Equals(name.Trim(), StringComparison.InvariantCultureIgnoreCase));
         
         if (attribute is null)
             return Result.Failure(ProductVariantError.AttributeNotFound);
@@ -84,5 +86,15 @@ public class ProductVariant : Entity<int>
             return Result.Failure(ProductVariantError.InvalidPrice);
         Price = newPrice;
         return Result.Success();
+    }
+
+    public void Activate()
+    {
+        IsActive = true;
+    }
+
+    public void Deactivate()
+    {
+        IsActive = false;
     }
 }

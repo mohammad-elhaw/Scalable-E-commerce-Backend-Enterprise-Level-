@@ -20,7 +20,7 @@ public sealed class ProductName : ValueObject
         if (value.Length > 100)
             return Result<ProductName>.Failure(ProductErrors.NameTooLong);
 
-        return Result<ProductName>.Success(new ProductName(value));
+        return Result<ProductName>.Success(new ProductName(value.Trim()));
     }
 
     protected override IEnumerable<object> GetEqualityComponents()

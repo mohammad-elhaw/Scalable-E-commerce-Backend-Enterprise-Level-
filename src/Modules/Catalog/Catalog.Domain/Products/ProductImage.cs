@@ -19,4 +19,13 @@ public sealed class ProductImage : Entity<int>
         SortOrder = sortOrder;
     }
 
+    internal void MarkAsPrimary()
+    {
+        IsPrimary = true;
+    }
+
+    internal void UnMarkAsPrimary()
+    {
+        IsPrimary = false;
+    }
 }

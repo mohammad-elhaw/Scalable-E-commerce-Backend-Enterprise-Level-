@@ -6,9 +6,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Infrastructure.EventBus;
 
-internal static class EventBusConfiguration
+public static class EventBusConfiguration
 {
-    internal static IServiceCollection AddCap<TDbContext>(
+    public static IServiceCollection AddCap<TDbContext>(
         this IServiceCollection services,
         IConfiguration config)
         where TDbContext : DbContext
