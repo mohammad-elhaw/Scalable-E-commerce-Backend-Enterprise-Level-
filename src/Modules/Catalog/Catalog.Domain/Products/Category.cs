@@ -1,16 +1,12 @@
-﻿using Catalog.Domain.Categories.Errors;
-using Catalog.Domain.Products;
+﻿using Catalog.Domain.Products.Errors;
 using SharedKernel;
 
-namespace Catalog.Domain.Categories;
+namespace Catalog.Domain.Products;
 
-public sealed class Category
-    : AuditableAggregateRoot<CategoryId>
+public sealed class Category : Entity<CategoryId>
 {
-    public CategoryName Name { get; private set; }
-    public Slug Slug { get; private set; }
+    public CategoryContent CategoryContent { get; private set; }
     public CategoryId? ParentId { get; private set; }
-    public CategoryDescription? Description { get; private set; }
     public SeoMetadata SeoMetadata { get; private set; }
 
     private Category()
@@ -25,9 +21,7 @@ public sealed class Category
         var category = new Category
         {
             Id = CategoryId.New(),
-            Name = content.Name,
-            Slug = content.Slug,
-            Description = content.Description,
+            CategoryContent = content,
             SeoMetadata = seoMetadata
         };
         

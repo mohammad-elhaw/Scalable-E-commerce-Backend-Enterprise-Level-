@@ -9,7 +9,7 @@ public class InventoryReservation :
 {
     public InventoryItemId InventoryItemId { get; private set; }
     public Guid OrderId { get; private set; }
-    public ReservationQuantity Quantity { get; private set; }
+    public int ReservationQuantity { get; private set; }
     public ReservationStatus Status { get; private set; }
     public DateTime ExpiresAtUtc { get; private set; }
     public bool IsExpired => DateTime.UtcNow >= ExpiresAtUtc;
@@ -19,21 +19,25 @@ public class InventoryReservation :
     public static Result<InventoryReservation> Create(
         InventoryItemId inventoryItemId,
         Guid orderId,
-        ReservationQuantity quantity,
+        int quantity,
         DateTime expiresAtUtc)
     {
         if (expiresAtUtc <= DateTime.UtcNow)
             return Result<InventoryReservation>.Failure(InventoryErrors.InvalidExpirationTime);
+
+        if (quantity < 0)
+            return Result<InventoryReservation>.Failure(InventoryErrors.InvalidQuantity);
 
         var reservation = new InventoryReservation
         {
             Id = ReservationId.New(),
             InventoryItemId = inventoryItemId,
             OrderId = orderId,
-            Quantity = quantity,
+            ReservationQuantity = quantity,
             Status = ReservationStatus.Active,
             ExpiresAtUtc = expiresAtUtc
         };
+
         return Result<InventoryReservation>.Success(reservation);
     }
 
@@ -57,9 +61,9 @@ public class InventoryReservation :
 
         RaiseDomainEvent(
             new ReservationExpiredDomainEvent(
-                Id, 
-                InventoryItemId, 
-                Quantity.Value));
+                Id,
+                InventoryItemId,
+                ReservationQuantity));
 
         return Result.Success();
     }

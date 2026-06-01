@@ -1,6 +1,6 @@
 ﻿using SharedKernel;
 
-namespace Catalog.Domain.Errors;
+namespace Catalog.Domain.Products.Errors;
 
 public static class MoneyErrors
 {

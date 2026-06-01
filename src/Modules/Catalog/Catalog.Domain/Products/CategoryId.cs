@@ -1,4 +1,4 @@
-﻿namespace Catalog.Domain.Categories;
+﻿namespace Catalog.Domain.Products;
 
 public sealed record CategoryId(Guid Value)
 {

@@ -1,6 +1,6 @@
 ﻿using SharedKernel;
 
-namespace Catalog.Domain.Categories.Errors;
+namespace Catalog.Domain.Products.Errors;
 
 public static class CategoryErrors
 {
@@ -32,5 +32,15 @@ public static class CategoryErrors
     public static readonly Error InvalidChildCategory = new(
         "Category.InvalidChildCategory",
         "Category Child is invalid",
+        default);
+
+    public static readonly Error EmptySlug = new(
+        "Slug.Empty",
+        "Slug cannot be empty.",
+        default);
+
+    public static readonly Error SlugTooLong = new(
+        "Slug.TooLong",
+        "Slug cannot be longer than 100 characters.",
         default);
 }

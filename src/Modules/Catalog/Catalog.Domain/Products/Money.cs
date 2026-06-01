@@ -1,4 +1,4 @@
-﻿using Catalog.Domain.Errors;
+﻿using Catalog.Domain.Products.Errors;
 using SharedKernel;
 
 namespace Catalog.Domain.Products;

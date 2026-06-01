@@ -1,5 +1,4 @@
 ﻿using Catalog.Domain.Brands;
-using Catalog.Domain.Categories;
 using Catalog.Domain.Products.Errors;
 using SharedKernel;
 
@@ -11,11 +10,9 @@ public class Product : AuditableAggregateRoot<ProductId>
 
     private readonly List<ProductImage> _images = [];
 
-    private readonly List<CategoryId> _categoryIds = [];
+    private readonly List<Category> _categories = [];
 
-    public ProductName Name { get; private set; }
-    public Slug Slug { get; private set; }
-    public ProductDescription Description { get; private set; }
+    public ProductContent ProductContent { get; private set; }
     public BrandId? BrandId { get; private set; }
     public SeoMetadata SeoMetadata { get; private set; }
     public ProductStatus Status { get; private set; }
@@ -27,8 +24,8 @@ public class Product : AuditableAggregateRoot<ProductId>
     public IReadOnlyList<ProductImage> Images
         => _images.AsReadOnly();
 
-    public IReadOnlyList<CategoryId> CategoryIds
-        => _categoryIds.AsReadOnly();
+    public IReadOnlyList<Category> CategoryIds
+        => _categories.AsReadOnly();
 
     private Product()
     {
@@ -43,9 +40,7 @@ public class Product : AuditableAggregateRoot<ProductId>
         var product = new Product
         {
             Id = ProductId.New(),
-            Name = content.Name,
-            Slug = content.Slug,
-            Description = content.Description,
+            ProductContent = content,
             BrandId = brandId,
             SeoMetadata = seoMetadata,
             Status = status
@@ -137,21 +132,21 @@ public class Product : AuditableAggregateRoot<ProductId>
         return Result.Success();
     }
 
-    public Result AddCategory(CategoryId categoryId)
+    public Result AddCategory(Category category)
     {
-        if(_categoryIds.Contains(categoryId))
+        if(_categories.Any(c => c.Id == category.Id))
             return Result.Failure(ProductErrors.CategoryAlreadyAssigned);
 
-        _categoryIds.Add(categoryId);
+        _categories.Add(category);
         return Result.Success();
     }
 
-    public Result RemoveCategory(CategoryId categoryId)
+    public Result RemoveCategory(Category category)
     {
-        if (!_categoryIds.Contains(categoryId))
+        if (!_categories.Any(c => c.Id == category.Id))
             return Result.Failure(ProductErrors.CategoryNotAssigned);
 
-        _categoryIds.Remove(categoryId);
+        _categories.Remove(category);
         return Result.Success();
     }
 
@@ -197,7 +192,7 @@ public class Product : AuditableAggregateRoot<ProductId>
         if(_images.Count == 0)
             return Result.Failure(ProductErrors.NoImages);
 
-        if(_categoryIds.Count == 0)
+        if(_categories.Count == 0)
             return Result.Failure(ProductErrors.NoCategories);
 
         return Result.Success();
