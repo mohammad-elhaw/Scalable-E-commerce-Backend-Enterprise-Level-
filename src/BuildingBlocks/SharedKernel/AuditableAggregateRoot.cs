@@ -3,7 +3,7 @@
 public abstract class AuditableAggregateRoot<TId>
     : AggregateRoot<TId>
 {
-    public DateTime CreatedAtUtc { get; protected set; }
+    public DateTime CreatedAtUtc { get; protected set; } = DateTime.UtcNow;
     public Guid? CreatedBy { get; protected set; }
     public DateTime? ModifiedAtUtc { get; protected set; }
     public Guid? ModifiedBy { get; protected set; }

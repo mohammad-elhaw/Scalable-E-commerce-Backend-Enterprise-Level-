@@ -6,8 +6,8 @@ namespace Inventory.Domain.Warehouses;
 public sealed class WarehouseContent
     : ValueObject
 {
-    internal string Name { get; }
-    internal string Code { get; }
+    public string Name { get; }
+    public string Code { get; }
 
     private WarehouseContent(string name, string code)
     {

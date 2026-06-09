@@ -5,6 +5,7 @@
     <Project Path="BuildingBlocks/SharedKernel/SharedKernel.csproj" Id="9cad9a0f-967e-4eac-881b-16198ce1315d" />
   </Folder>
   <Folder Name="/Modules/" />
+  <Folder Name="/Modules/Cart/" />
   <Folder Name="/Modules/Catalog/">
     <Project Path="Modules/Catalog/Catalog.API/Catalog.API.csproj" Id="809377b1-8375-4d40-814e-5f5594f47161" />
     <Project Path="Modules/Catalog/Catalog.Application/Catalog.Application.csproj" Id="03ba6c18-59a2-46fd-a21f-1a2cc7966273" />
@@ -18,10 +19,14 @@
     <Project Path="Modules/Inventory/Inventory.Application/Inventory.Application.csproj" Id="6aca9743-7b22-4fbf-bdb3-76bacaa9252c" />
     <Project Path="Modules/Inventory/Inventory.Domain/Inventory.Domain.csproj" Id="6262c782-0e24-47f4-9ee6-06b319fa2293" />
     <Project Path="Modules/Inventory/Inventory.Infrastructure/Inventory.Infrastructure.csproj" Id="15d1c30b-8dcd-4878-b2e0-6dc519dbdcbb" />
+    <Project Path="Modules/Inventory/Inventory.Queries/Inventory.Queries.csproj" Id="28ac8b9b-eece-4985-9a10-a347b236c97f" />
   </Folder>
+  <Folder Name="/Modules/Notifications/" />
   <Folder Name="/Modules/Ordering/" />
-  <Folder Name="/Modules/Payments/" />
+  <Folder Name="/Modules/Payment/" />
   <Folder Name="/Modules/Pricing/" />
+  <Folder Name="/Modules/Promotions/" />
+  <Folder Name="/Modules/Reviews/" />
   <Folder Name="/Modules/Shipping/" />
   <Project Path="docker-compose.dcproj">
     <Build />

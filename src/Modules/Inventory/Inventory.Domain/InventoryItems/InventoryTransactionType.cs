@@ -6,5 +6,6 @@ public enum InventoryTransactionType : byte
     StockRemoved = 2,
     Reserved = 3,
     Released = 4,
-    Adjusted = 5
+    Adjusted = 5,
+    Committed = 6
 }

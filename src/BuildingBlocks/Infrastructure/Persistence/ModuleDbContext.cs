@@ -5,7 +5,7 @@ using SharedKernel;
 namespace Infrastructure.Persistence;
 
 public abstract class ModuleDbContext(
-    DbContextOptions<ModuleDbContext> options,
+    DbContextOptions options,
     IDomainEventDispatcher dispatcher)
     : DbContext(options)
 {

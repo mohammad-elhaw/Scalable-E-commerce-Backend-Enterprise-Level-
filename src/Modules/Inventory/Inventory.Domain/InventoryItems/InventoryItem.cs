@@ -6,17 +6,15 @@ namespace Inventory.Domain.InventoryItems;
 
 public class InventoryItem : AuditableAggregateRoot<InventoryItemId>
 {
-    private readonly List<InventoryTransaction> _transactions = [];
-
     public ProductVariantId ProductVariantId { get; private set; }
     public WarehouseId WarehouseId { get; private set; }
     public StockQuantity QuantityOnHand { get; private set; }
     public StockQuantity ReservedQuantity { get; private set; }
 
     public bool IsActive { get; private set; }
-
     public int AvailableQuantity => QuantityOnHand.Value - ReservedQuantity.Value;
 
+    private readonly List<InventoryTransaction> _transactions = [];
     public IReadOnlyList<InventoryTransaction> Transactions => _transactions.AsReadOnly();
 
     private InventoryItem() { }
@@ -58,7 +56,7 @@ public class InventoryItem : AuditableAggregateRoot<InventoryItemId>
         return Result.Success();
     }
 
-    public Result Reserve(StockQuantity quantity, string? note)
+    public Result ReserveStock(StockQuantity quantity, string? note)
     {
         if (AvailableQuantity < quantity.Value)
             return Result.Failure(InventoryErrors.ReservationExceedsAvailableStock);
@@ -66,6 +64,20 @@ public class InventoryItem : AuditableAggregateRoot<InventoryItemId>
         ReservedQuantity = ReservedQuantity.Increase(quantity.Value).Value!;
 
         AddTransaction(InventoryTransactionType.Reserved, quantity.Value, note);
+        return Result.Success();
+    }
+
+    // after payment should be called when reservation is confirmed,
+    // it will decrease both reserved quantity and quantity on hand
+    public Result CommitReservation(StockQuantity quantity, string? note)
+    {
+        if (ReservedQuantity.Value < quantity.Value)
+            return Result.Failure(InventoryErrors.InvalidQuantity);
+
+        ReservedQuantity = ReservedQuantity.Decrease(quantity.Value).Value!;
+        QuantityOnHand = QuantityOnHand.Decrease(quantity.Value).Value!;
+
+        AddTransaction(InventoryTransactionType.Committed, quantity.Value, note);
         return Result.Success();
     }
 
@@ -80,6 +92,7 @@ public class InventoryItem : AuditableAggregateRoot<InventoryItemId>
         return Result.Success();
     }
 
+    // should used by admin
     public Result AdjustStock(
         int newQuantity,
         string? note = null)
