@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Inventory.Infrastructure.Persistence;
 
-internal class InventoryDbContext(
+public class InventoryDbContext(
     DbContextOptions<InventoryDbContext> options, 
     IDomainEventDispatcher dispatcher)
     : ModuleDbContext(options, dispatcher)

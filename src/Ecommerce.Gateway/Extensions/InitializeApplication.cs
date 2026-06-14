@@ -7,7 +7,7 @@ public static class InitializeApplication
         app.UseHttpsRedirection();
         app.UseAuthentication();
         app.UseAuthorization();
-        app.MapControllers();
+        //app.MapControllers();
         return app;
     }
 }

@@ -1,7 +1,9 @@
 ﻿using Infrastructure.EventBus;
 using Inventory.Application.Reservations.Services;
+using Inventory.Domain.Reservations;
 using Inventory.Infrastructure.BackgroundJobs;
 using Inventory.Infrastructure.Persistence;
+using Inventory.Infrastructure.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,6 +25,9 @@ public static class ServiceCollectionExtenstions
         services.AddScoped<IReservationExpirationService, ReservationExpirationService>();
 
         // Repositories
+        services.AddScoped<IWarehouseRepository, WarehouseRepository>();
+        services.AddScoped<IInventoryItemRepository, InventoryItemRepository>();
+        services.AddScoped<IInventoryReservationRepository, InventoryReservationRepository>();
 
         // Background Jobs
         //services.AddHostedService<ReservationExpirationWorker>();
