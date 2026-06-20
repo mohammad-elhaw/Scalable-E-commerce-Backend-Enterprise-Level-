@@ -1,6 +1,4 @@
-﻿using Inventory.Domain.Warehouses;
-
-namespace Inventory.Domain.Reservations;
+﻿namespace Inventory.Domain.Warehouses;
 
 public interface IWarehouseRepository
 {

@@ -1,6 +1,8 @@
-﻿namespace SharedKernel;
+﻿using Microsoft.AspNetCore.Http;
 
-public record Error(string Code, string Message, object? Details)
+namespace SharedKernel;
+
+public record Error(string Code, string Message, int StatusCode)
 {
-    public static readonly Error None = new(string.Empty, string.Empty, default);
+    public static readonly Error None = new(string.Empty, string.Empty, StatusCodes.Status200OK);
 }

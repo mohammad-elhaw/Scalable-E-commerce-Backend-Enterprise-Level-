@@ -1,6 +1,8 @@
 ﻿using Infrastructure.EventBus;
 using Inventory.Application.Reservations.Services;
+using Inventory.Domain.InventoryItems;
 using Inventory.Domain.Reservations;
+using Inventory.Domain.Warehouses;
 using Inventory.Infrastructure.BackgroundJobs;
 using Inventory.Infrastructure.Persistence;
 using Inventory.Infrastructure.Persistence.Repositories;

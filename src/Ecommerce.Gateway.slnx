@@ -12,7 +12,6 @@
     <Project Path="Modules/Catalog/Catalog.Domain/Catalog.Domain.csproj" Id="58a7f52a-1541-4682-a0c3-75971dc95569" />
     <Project Path="Modules/Catalog/Catalog.Infrastructure/Catalog.Infrastructure.csproj" Id="a0092725-2360-4d04-987e-2fc43db3f99d" />
   </Folder>
-  <Folder Name="/Modules/Customers/" />
   <Folder Name="/Modules/Identity/" />
   <Folder Name="/Modules/Inventory/">
     <Project Path="Modules/Inventory/Inventory.API/Inventory.API.csproj" Id="a67ab7df-7c58-4408-bf97-3c49b1e0ba63" />
@@ -24,7 +23,6 @@
   <Folder Name="/Modules/Notifications/" />
   <Folder Name="/Modules/Ordering/" />
   <Folder Name="/Modules/Payment/" />
-  <Folder Name="/Modules/Pricing/" />
   <Folder Name="/Modules/Promotions/" />
   <Folder Name="/Modules/Reviews/" />
   <Folder Name="/Modules/Shipping/" />

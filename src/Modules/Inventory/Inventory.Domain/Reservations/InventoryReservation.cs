@@ -4,7 +4,7 @@ using SharedKernel;
 
 namespace Inventory.Domain.Reservations;
 
-public class InventoryReservation : 
+public class InventoryReservation :
     AuditableAggregateRoot<ReservationId>
 {
     public InventoryItemId InventoryItemId { get; private set; }
@@ -12,7 +12,7 @@ public class InventoryReservation :
     public int ReservationQuantity { get; private set; }
     public ReservationStatus Status { get; private set; }
     public DateTime ExpiresAtUtc { get; private set; }
-    public bool IsExpired => DateTime.UtcNow >= ExpiresAtUtc;
+    public bool IsExpired(DateTime utcNow) => utcNow >= ExpiresAtUtc;
 
     private InventoryReservation() { }
 
@@ -41,20 +41,21 @@ public class InventoryReservation :
         return Result<InventoryReservation>.Success(reservation);
     }
 
-    public Result Confirm()
+    public Result Commit()
     {
         if (Status != ReservationStatus.Active)
             return Result.Failure(ReservationErrors.InvalidState);
 
-        Status = ReservationStatus.Confirmed;
+        Status = ReservationStatus.Committed;
+        // raise a domain event for committing the reservation
         return Result.Success();
     }
     public Result Expire()
     {
-        if(Status != ReservationStatus.Active)
+        if (Status != ReservationStatus.Active)
             return Result.Failure(ReservationErrors.InvalidState);
 
-        if(DateTime.UtcNow < ExpiresAtUtc)
+        if (DateTime.UtcNow < ExpiresAtUtc)
             return Result.Failure(ReservationErrors.NotExpiredYet);
 
         Status = ReservationStatus.Expired;
@@ -68,7 +69,14 @@ public class InventoryReservation :
         return Result.Success();
     }
 
-    public void Cancel()
-        => Status = ReservationStatus.Cancelled;
+    public Result Release()
+    {
+        if (Status != ReservationStatus.Active)
+            return Result.Failure(ReservationErrors.InvalidState);
+
+        Status = ReservationStatus.Released;
+        // Raise a domain event for releasing the reservation
+        return Result.Success();
+    }
     
 }

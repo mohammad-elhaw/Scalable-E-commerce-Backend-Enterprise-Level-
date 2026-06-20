@@ -51,6 +51,14 @@ namespace Inventory.Infrastructure.Persistence.Migrations
                     b.Property<Guid>("ProductVariantId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<int>("QuantityOnHand")
+                        .HasColumnType("int")
+                        .HasColumnName("QuantityOnHand");
+
+                    b.Property<int>("ReservedQuantity")
+                        .HasColumnType("int")
+                        .HasColumnName("ReservedQuantity");
+
                     b.Property<Guid>("WarehouseId")
                         .HasColumnType("uniqueidentifier");
 
@@ -168,49 +176,6 @@ namespace Inventory.Infrastructure.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Warehouses", (string)null);
-                });
-
-            modelBuilder.Entity("Inventory.Domain.InventoryItems.InventoryItem", b =>
-                {
-                    b.OwnsOne("Inventory.Domain.InventoryItems.StockQuantity", "QuantityOnHand", b1 =>
-                        {
-                            b1.Property<Guid>("InventoryItemId")
-                                .HasColumnType("uniqueidentifier");
-
-                            b1.Property<int>("Value")
-                                .HasColumnType("int")
-                                .HasColumnName("QuantityOnHand");
-
-                            b1.HasKey("InventoryItemId");
-
-                            b1.ToTable("InventoryItems");
-
-                            b1.WithOwner()
-                                .HasForeignKey("InventoryItemId");
-                        });
-
-                    b.OwnsOne("Inventory.Domain.InventoryItems.StockQuantity", "ReservedQuantity", b1 =>
-                        {
-                            b1.Property<Guid>("InventoryItemId")
-                                .HasColumnType("uniqueidentifier");
-
-                            b1.Property<int>("Value")
-                                .HasColumnType("int")
-                                .HasColumnName("ReservedQuantity");
-
-                            b1.HasKey("InventoryItemId");
-
-                            b1.ToTable("InventoryItems");
-
-                            b1.WithOwner()
-                                .HasForeignKey("InventoryItemId");
-                        });
-
-                    b.Navigation("QuantityOnHand")
-                        .IsRequired();
-
-                    b.Navigation("ReservedQuantity")
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Inventory.Domain.InventoryItems.InventoryTransaction", b =>

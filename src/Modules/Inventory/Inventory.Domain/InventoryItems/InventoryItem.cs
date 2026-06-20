@@ -25,6 +25,12 @@ public class InventoryItem : AuditableAggregateRoot<InventoryItemId>
     {
         var zero = StockQuantity.Create(0).Value!;
 
+        if(Guid.Empty == productVariantId.Value)
+            return Result<InventoryItem>.Failure(InventoryErrors.InvalidProductVariantId);
+
+        if(Guid.Empty == warehouseId.Value)
+            return Result<InventoryItem>.Failure(InventoryErrors.InvalidWarehouseId);
+
         var inventoryItem = new InventoryItem
         {
             Id = InventoryItemId.New(),
@@ -43,7 +49,7 @@ public class InventoryItem : AuditableAggregateRoot<InventoryItemId>
         QuantityOnHand = QuantityOnHand.Increase(quantity.Value).Value!;
         
         AddTransaction(InventoryTransactionType.StockAdded, quantity.Value, note);
-
+        // raise domain event for stock added
         return Result.Success();
     }
 
@@ -52,7 +58,7 @@ public class InventoryItem : AuditableAggregateRoot<InventoryItemId>
         QuantityOnHand = QuantityOnHand.Decrease(quantity.Value).Value!;
 
         AddTransaction(InventoryTransactionType.StockRemoved, quantity, note);
-
+        // raise domain event for stock removed
         return Result.Success();
     }
 
@@ -64,31 +70,39 @@ public class InventoryItem : AuditableAggregateRoot<InventoryItemId>
         ReservedQuantity = ReservedQuantity.Increase(quantity.Value).Value!;
 
         AddTransaction(InventoryTransactionType.Reserved, quantity.Value, note);
+        // raise domain event for stock reserved
         return Result.Success();
     }
 
     // after payment should be called when reservation is confirmed,
     // it will decrease both reserved quantity and quantity on hand
-    public Result CommitReservation(StockQuantity quantity, string? note)
+    public Result CommitReservation(int quantity, string? note)
     {
-        if (ReservedQuantity.Value < quantity.Value)
+        if (quantity < 0)
+            return Result<StockQuantity>.Failure(InventoryErrors.InvalidQuantity);
+
+        if (ReservedQuantity.Value < quantity)
             return Result.Failure(InventoryErrors.InvalidQuantity);
 
-        ReservedQuantity = ReservedQuantity.Decrease(quantity.Value).Value!;
-        QuantityOnHand = QuantityOnHand.Decrease(quantity.Value).Value!;
+        ReservedQuantity = ReservedQuantity.Decrease(quantity).Value!;
+        QuantityOnHand = QuantityOnHand.Decrease(quantity).Value!;
 
-        AddTransaction(InventoryTransactionType.Committed, quantity.Value, note);
+        AddTransaction(InventoryTransactionType.Committed, quantity, note);
+        
         return Result.Success();
     }
 
-    public Result ReleaseReservation(StockQuantity quantity, string? note)
+    public Result ReleaseReservation(int quantity, string? note)
     {
-        if (ReservedQuantity.Value < quantity.Value)
+        if (quantity < 0)
+            return Result<StockQuantity>.Failure(InventoryErrors.InvalidQuantity);
+
+        if (ReservedQuantity.Value < quantity)
             return Result.Failure(InventoryErrors.InvalidQuantity);
 
-        ReservedQuantity = ReservedQuantity.Decrease(quantity.Value).Value!;
-        AddTransaction(InventoryTransactionType.Released, quantity.Value, note);
-
+        ReservedQuantity = ReservedQuantity.Decrease(quantity).Value!;
+        AddTransaction(InventoryTransactionType.Released, quantity, note);
+        // raise domain event for stock released
         return Result.Success();
     }
 
@@ -103,11 +117,11 @@ public class InventoryItem : AuditableAggregateRoot<InventoryItemId>
         if(newQuantity < ReservedQuantity.Value)
             return Result.Failure(InventoryErrors.AdjustmentLessThanReserved);
 
-        var difference = newQuantity - ReservedQuantity.Value;
+        var difference = newQuantity - QuantityOnHand.Value;
 
         QuantityOnHand = StockQuantity.Create(newQuantity).Value!;
         AddTransaction(InventoryTransactionType.Adjusted, difference, note);
-
+        // raise domain event for stock adjusted
         return Result.Success();
     }
 

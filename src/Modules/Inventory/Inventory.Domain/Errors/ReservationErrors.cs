@@ -1,4 +1,5 @@
-﻿using SharedKernel;
+﻿using Microsoft.AspNetCore.Http;
+using SharedKernel;
 
 namespace Inventory.Domain.Errors;
 
@@ -8,28 +9,29 @@ public static class ReservationErrors
         new(
             "Inventory.ReservationNotFound",
             "Reservation not found.",
-            default);
+            StatusCodes.Status404NotFound);
+
     public static readonly Error ReservationAlreadyExists =
        new(
            "Inventory.ReservationAlreadyExists",
            "A reservation for this product variant and warehouse already exists.",
-           default);
+           StatusCodes.Status409Conflict);
 
     public static readonly Error InvalidExpirationTime =
         new(
             "Inventory.InvalidExpirationTime",
             "Expiration time must be in the future.",
-            default);
+            StatusCodes.Status400BadRequest);
 
     public static readonly Error InvalidState =
         new(
             "Inventory.InvalidReservationState",
             "The reservation is not in a valid state for this operation.",
-            default);
+            StatusCodes.Status409Conflict);
 
     public static readonly Error NotExpiredYet =
         new(
             "Inventory.ReservationNotExpiredYet",
             "The reservation has not expired yet.",
-            default);
+            StatusCodes.Status409Conflict);
 }

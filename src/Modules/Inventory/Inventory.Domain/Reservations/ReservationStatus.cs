@@ -3,7 +3,7 @@
 public enum ReservationStatus : byte
 {
     Active = 1,
-    Confirmed = 2,
-    Cancelled = 3,
+    Committed = 2,
+    Released = 3,
     Expired = 4
 }

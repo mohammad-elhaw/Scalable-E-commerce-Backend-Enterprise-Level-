@@ -1,5 +1,4 @@
 ﻿using Inventory.Domain.InventoryItems;
-using Inventory.Domain.Reservations;
 using Inventory.Domain.Warehouses;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel;
@@ -9,9 +8,8 @@ namespace Inventory.Infrastructure.Persistence.Repositories;
 public class InventoryItemRepository(InventoryDbContext context)
     : IInventoryItemRepository
 {
-    public async Task AddAsync(InventoryItem inventoryItem, 
-        CancellationToken cancellationToken)
-        => await context.InventoryItems.AddAsync(inventoryItem, cancellationToken);
+    public void Add(InventoryItem inventoryItem)
+        => context.InventoryItems.Add(inventoryItem);
 
     public async Task<InventoryItem?> GetByIdAsync(InventoryItemId inventoryItemId, 
         CancellationToken cancellationToken)
@@ -27,4 +25,7 @@ public class InventoryItemRepository(InventoryDbContext context)
 
     public void Remove(InventoryItem inventoryItem)
         => context.InventoryItems.Remove(inventoryItem);
+
+    public async Task<int> SaveChanges()
+        => await context.SaveChangesAsync();
 }

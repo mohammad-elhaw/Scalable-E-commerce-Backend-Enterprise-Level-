@@ -28,21 +28,17 @@ internal class InventoryItemConfiguration
                 id => id.Value,
                 value => new Domain.Warehouses.WarehouseId(value));
 
-        builder.OwnsOne(x => x.QuantityOnHand,
-            q =>
-            {
-                q.Property(q => q.Value)
-                    .HasColumnName("QuantityOnHand")
-                    .IsRequired();
-            });
+        builder.Property(x => x.QuantityOnHand)
+            .HasConversion(
+               q => q.Value,
+                value => StockQuantity.Create(value).Value!)
+            .HasColumnName("QuantityOnHand");
 
-        builder.OwnsOne(x => x.ReservedQuantity,
-            q =>
-            {
-                q.Property(q => q.Value)
-                    .HasColumnName("ReservedQuantity")
-                    .IsRequired();
-            });
+        builder.Property(x => x.ReservedQuantity)
+            .HasConversion(
+                q => q.Value,
+                value => StockQuantity.Create(value).Value!)
+            .HasColumnName("ReservedQuantity");
 
         builder.HasMany<InventoryTransaction>(x => x.Transactions)
             .WithOne()

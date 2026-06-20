@@ -1,8 +1,7 @@
-﻿using Inventory.Domain.InventoryItems;
-using Inventory.Domain.Warehouses;
+﻿using Inventory.Domain.Warehouses;
 using SharedKernel;
 
-namespace Inventory.Domain.Reservations;
+namespace Inventory.Domain.InventoryItems;
 
 public interface IInventoryItemRepository
 {
@@ -14,9 +13,7 @@ public interface IInventoryItemRepository
         WarehouseId warehouseId,
         CancellationToken cancellationToken);
 
-    Task AddAsync(
-        InventoryItem inventoryItem,
-        CancellationToken cancellationToken);
-
+    void Add(InventoryItem inventoryItem);
     void Remove(InventoryItem inventoryItem);
+    Task<int> SaveChanges();
 }

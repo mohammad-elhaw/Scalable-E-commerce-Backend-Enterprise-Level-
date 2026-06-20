@@ -10,11 +10,13 @@ public class InventoryReservationRepository(
     public void Add(InventoryReservation reservation)
         => context.InventoryReservations.Add(reservation);
 
-    public async Task<List<InventoryReservation>> GetExpiredAsync(CancellationToken cancellationToken)
+    public async Task<List<InventoryReservation>> GetExpiredAsync(
+        DateTime utcNow,
+        CancellationToken cancellationToken)
         => await context.InventoryReservations
-            .Where(x => 
+            .Where(x =>
                 x.Status == ReservationStatus.Active &&
-                x.ExpiresAtUtc <= DateTime.UtcNow && !x.IsExpired)
+                x.ExpiresAtUtc <= utcNow && !x.IsExpired(utcNow))
             .ToListAsync(cancellationToken);
 
     public async Task<InventoryReservation?> GetByIdAsync(ReservationId reservationId, CancellationToken cancellationToken)

@@ -1,5 +1,4 @@
-﻿using Inventory.Domain.Reservations;
-using Inventory.Domain.Warehouses;
+﻿using Inventory.Domain.Warehouses;
 using Microsoft.EntityFrameworkCore;
 
 namespace Inventory.Infrastructure.Persistence.Repositories;

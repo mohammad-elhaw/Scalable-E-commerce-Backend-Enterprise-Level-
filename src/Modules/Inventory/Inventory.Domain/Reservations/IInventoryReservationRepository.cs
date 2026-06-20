@@ -7,6 +7,7 @@ public interface IInventoryReservationRepository
         CancellationToken cancellationToken);
 
     Task<List<InventoryReservation>> GetExpiredAsync(
+        DateTime utcNow,
         CancellationToken cancellationToken);
 
     void Add(InventoryReservation reservation);

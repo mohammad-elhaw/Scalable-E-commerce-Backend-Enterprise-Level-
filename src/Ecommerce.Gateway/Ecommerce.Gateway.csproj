@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BuildingBlocks\Infrastructure\Infrastructure.csproj" />
+    <ProjectReference Include="..\Modules\Inventory\Inventory.API\Inventory.API.csproj" />
     <ProjectReference Include="..\Modules\Inventory\Inventory.Infrastructure\Inventory.Infrastructure.csproj" />
     <ProjectReference Include="..\Modules\Inventory\Inventory.Queries\Inventory.Queries.csproj" />
   </ItemGroup>
